@@ -1,5 +1,6 @@
 aiohttp==3.5.4
 aiosocksy==0.1.2
+aiosqlite==0.10.0
 aiotg==1.0.0
 argh==0.26.2
 async-timeout==3.0.1
