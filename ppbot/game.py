@@ -53,7 +53,10 @@ class Game:
         self.votes[self._initiator_str(initiator)].set(point)
 
     def get_text(self):
-        result = "Vote for:\n{}\nInitiator: {}".format(self.text, self._initiator_str(self.initiator))
+        result = "{} for:\n{}\nInitiator: {}".format(
+            "Vote" if not self.revealed else "Results",
+            self.text, self._initiator_str(self.initiator)
+        )
         if self.votes:
             votes_str = "\n".join(
                 "{:3s} {}".format(
