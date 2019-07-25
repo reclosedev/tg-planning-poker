@@ -7,16 +7,33 @@ from aiotg import Bot, Chat, CallbackQuery, BotApiError
 from ppbot.utils import init_logging
 from ppbot.game import GameRegistry
 
+
 TOKEN = os.environ["PP_BOT_TOKEN"]
 DB_PATH = os.environ.get("PP_BOT_DB_PATH", os.path.expanduser("~/.tg_pp_bot.db"))
+GREETING = """
+Use 
+/poker task url or description 
+to start game.
+
+Multiline is also supported
+/poker line1
+line2
+Currently there is only one scale: 1, 2, 3, 5, 8, 13, 20, 40, ❔, ☕
+"""
 
 bot = Bot(TOKEN)
 storage = GameRegistry()
 init_logging()
 
 
-@bot.command("/poker (.+)")
-async def get_url(chat: Chat, match):
+@bot.command("/start")
+@bot.command("/?help")
+async def start_poker(chat: Chat, match):
+    await chat.send_text(GREETING)
+
+
+@bot.command("(?s)/poker\s+(.+)$")
+async def start_poker(chat: Chat, match):
     vote_id = str(chat.message["message_id"])
     text = match.group(1)
     game = storage.new_game(chat.id, vote_id, chat.sender, text)
