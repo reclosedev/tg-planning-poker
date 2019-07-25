@@ -33,6 +33,7 @@ async def start_poker(chat: Chat, match):
 
 
 @bot.command("(?s)/poker\s+(.+)$")
+@bot.command("/(poker)$")
 async def start_poker(chat: Chat, match):
     vote_id = str(chat.message["message_id"])
     text = match.group(1)
