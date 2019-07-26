@@ -40,6 +40,12 @@ class Vote:
 
 
 class Game:
+
+    OP_RESTART = "restart"
+    OP_RESTART_NEW = "restart-new"
+    OP_REVEAL = "reveal"
+    OP_REVEAL_NEW = "reveal-new"
+
     def __init__(self, chat_id, vote_id, initiator, text):
         self.chat_id = chat_id
         self.vote_id = vote_id
@@ -88,14 +94,24 @@ class Game:
                     {
                         "type": "InlineKeyboardButton",
                         "text": "Restart",
-                        "callback_data": "restart-click-{}".format(self.vote_id),
-                    }
+                        "callback_data": "{}-click-{}".format(self.OP_RESTART, self.vote_id),
+                    },
+                    {
+                        "type": "InlineKeyboardButton",
+                        "text": "Restart 🆕",
+                        "callback_data": "{}-click-{}".format(self.OP_RESTART_NEW, self.vote_id),
+                    },
                 ],
                 [
                     {
                         "type": "InlineKeyboardButton",
                         "text": "Open Cards",
-                        "callback_data": "reveal-click-{}".format(self.vote_id),
+                        "callback_data": "{}-click-{}".format(self.OP_REVEAL, self.vote_id),
+                    },
+                    {
+                        "type": "InlineKeyboardButton",
+                        "text": "Open Cards 🆕",
+                        "callback_data": "{}-click-{}".format(self.OP_REVEAL_NEW, self.vote_id),
                     },
                 ],
             ],
