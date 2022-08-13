@@ -3,21 +3,15 @@ import json
 
 import aiosqlite
 
-KEYBOARD_POINTS_LAYOUT = [
-    ["0.5", "1", "2", "3", "4"],
-    ["5", "6", "7", "8", "9"],
-    ["10", "12", "18", "24", "30"],
-    ["❓", "☕"],
+ALL_MARKS = "♥♦♠♣"
+
+POINTS_LAYOUT = [
+    ["0", "0.5", "1", "2", "3", "4"],
+    ["5", "6", "7", "8", "9", "10"],
+    ["12", "18", "24", "30"],
+    ["❓", "∞", "☕"],
 ]
 
-AVAILABLE_POINTS = []
-ROW_POINT_RANGES = []
-
-for row in KEYBOARD_POINTS_LAYOUT:
-    AVAILABLE_POINTS += row
-    ROW_POINT_RANGES.append(len(row))
-
-ALL_MARKS = "♥♦♠♣"
 
 class Vote:
     def __init__(self):
@@ -44,6 +38,7 @@ class Vote:
         res.point = dct["point"]
         res.version = dct["version"]
         return res
+
 
 class Game:
     OP_RESTART = "restart"
@@ -81,53 +76,52 @@ class Game:
     def get_send_kwargs(self):
         return {"text": self.get_text(), "reply_markup": json.dumps(self.get_markup())}
 
-    def get_markup(self):
-        points_keys = [
+    def get_point_button(self, point):
+        return {
+            "type": "InlineKeyboardButton",
+            "text": point,
+            "callback_data": "vote-click-{}-{}".format(self.vote_id, point),
+        }
+
+    def get_reset_buttons(self):
+        return [
             {
                 "type": "InlineKeyboardButton",
-                "text": point,
-                "callback_data": "vote-click-{}-{}".format(self.vote_id, point),
-            }
-            for point in AVAILABLE_POINTS
+                "text": "Restart",
+                "callback_data": "{}-click-{}".format(self.OP_RESTART, self.vote_id),
+            },
+            {
+                "type": "InlineKeyboardButton",
+                "text": "Restart 🆕",
+                "callback_data": "{}-click-{}".format(self.OP_RESTART_NEW, self.vote_id),
+            },
         ]
 
+    def get_open_cards_buttons(self):
+        return [
+            {
+                "type": "InlineKeyboardButton",
+                "text": "Open Cards",
+                "callback_data": "{}-click-{}".format(self.OP_REVEAL, self.vote_id),
+            },
+            {
+                "type": "InlineKeyboardButton",
+                "text": "Open Cards 🆕",
+                "callback_data": "{}-click-{}".format(self.OP_REVEAL_NEW, self.vote_id),
+            },
+        ]
+
+    def get_markup(self):
         layout_rows = []
-        point_key_index_start = 0
-        for layout_row in KEYBOARD_POINTS_LAYOUT:
-            point_key_index_end = point_key_index_start + len(layout_row)
-            point_keys_row = points_keys[slice(point_key_index_start, point_key_index_end)]
-            layout_rows.append(point_keys_row)
-            point_key_index_start = point_key_index_end
 
-        layout_rows.append(
-            [
-                {
-                    "type": "InlineKeyboardButton",
-                    "text": "Restart",
-                    "callback_data": "{}-click-{}".format(self.OP_RESTART, self.vote_id),
-                },
-                {
-                    "type": "InlineKeyboardButton",
-                    "text": "Restart 🆕",
-                    "callback_data": "{}-click-{}".format(self.OP_RESTART_NEW, self.vote_id),
-                },
-            ],
-        )
+        for points_layout_row in POINTS_LAYOUT:
+            points_buttons_row = []
+            for point in points_layout_row:
+                points_buttons_row.append(self.get_point_button(point))
+            layout_rows.append(points_buttons_row)
 
-        layout_rows.append(
-            [
-                {
-                    "type": "InlineKeyboardButton",
-                    "text": "Open Cards",
-                    "callback_data": "{}-click-{}".format(self.OP_REVEAL, self.vote_id),
-                },
-                {
-                    "type": "InlineKeyboardButton",
-                    "text": "Open Cards 🆕",
-                    "callback_data": "{}-click-{}".format(self.OP_REVEAL_NEW, self.vote_id),
-                },
-            ],
-        )
+        layout_rows.append(self.get_reset_buttons())
+        layout_rows.append(self.get_open_cards_buttons())
 
         return {
             "type": "InlineKeyboardMarkup",

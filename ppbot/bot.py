@@ -10,14 +10,22 @@ from ppbot.game import GameRegistry, Game
 TOKEN = os.environ["PP_BOT_TOKEN"]
 DB_PATH = os.environ.get("PP_BOT_DB_PATH", os.path.expanduser("~/.tg_pp_bot.db"))
 GREETING = """
-Use 
-/poker task url or description 
-to start game.
+To start *Planning Poker* use /poker command\.
+You can add any description after the command to provide more task context\. 
+  
+*Example:*
+`/poker Redesign Planning Poker Bot keyboard layout`
 
-Multiline is also supported
-/poker line1
-line2
-Currently there is only one scale: 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 18, 24, 30, ❓, ☕,
+*Example with multiline description:*
+```
+/poker Redesign planning poker bot keyboard layout
+https://issue\.tracker/TASK-123
+```
+
+Currently there is only one scale of numbers with additional votes:
+\* ❓— Still unsure how to estimate
+\* ∞ — Task is too large, impossible to estimate
+\* ☕ — Let's take a break
 """
 
 bot = Bot(TOKEN)
@@ -29,7 +37,10 @@ REVEAL_RESTART_COMMANDS = [Game.OP_REVEAL, Game.OP_RESTART, Game.OP_RESTART_NEW,
 @bot.command("/start")
 @bot.command("/?help")
 async def start_poker(chat: Chat, match):
-    await chat.send_text(GREETING)
+    await chat.send_text(
+        GREETING,
+        parse_mode="MarkdownV2"
+    )
 
 
 @bot.command("(?s)/poker\s+(.+)$")
