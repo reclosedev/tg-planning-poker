@@ -22,7 +22,7 @@ Add any description after the command to provide context\.
 https://issue\.tracker/TASK-123
 ```
 
-Currently there is only one scale of numbers with additional votes:
+Currently, there is only one scale of numbers with additional votes:
 \* ❓— Still unsure how to estimate
 \* ∞ — Task is too large, impossible to estimate
 \* ☕ — Let's take a break
