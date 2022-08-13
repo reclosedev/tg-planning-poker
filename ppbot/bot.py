@@ -11,7 +11,7 @@ TOKEN = os.environ["PP_BOT_TOKEN"]
 DB_PATH = os.environ.get("PP_BOT_DB_PATH", os.path.expanduser("~/.tg_pp_bot.db"))
 GREETING = """
 To start *Planning Poker* use /poker command\.
-You can add any description after the command to provide more task context\. 
+Add any description after the command to provide context\. 
   
 *Example:*
 `/poker Redesign Planning Poker Bot keyboard layout`
