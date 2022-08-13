@@ -8,7 +8,7 @@ attrs==19.1.0
 chardet==3.0.4
 idna==2.8
 idna-ssl==1.1.0
-Logbook==1.4.3
+Logbook==1.4.4
 multidict==4.5.2
 pathtools==0.1.2
 PyYAML==5.1.1

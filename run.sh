@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 NAME=ppbot
-DB_LOCATION=/db/
+DB_LOCATION=/db
 DB_NAME=tg_pp_bot.db
 
 docker build -t ${NAME} .
