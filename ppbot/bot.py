@@ -17,7 +17,7 @@ to start game.
 Multiline is also supported
 /poker line1
 line2
-Currently there is only one scale: 1, 2, 3, 5, 8, 13, 20, 40, ❔, ☕
+Currently there is only one scale: 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 18, 24, 30, ❓, ☕,
 """
 
 bot = Bot(TOKEN)
@@ -70,13 +70,15 @@ async def reveal_click(chat: Chat, cq: CallbackQuery, match):
     operation = match.group(1)
     vote_id = match.group(2)
     game = await storage.get_game(chat.id, vote_id)
+
     if not game:
         return await cq.answer(text="No such game")
 
     if cq.src["from"]["id"] != game.initiator["id"]:
-        return await cq.answer(text="{} is available only for initiator".format(operation))
+        return await cq.answer(text="Operation '{}' is available only for initiator".format(operation))
 
     current_text = game.get_text()
+
     if operation in (Game.OP_RESTART, Game.OP_RESTART_NEW):
         game.restart()
     else:

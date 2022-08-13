@@ -3,14 +3,21 @@ import json
 
 import aiosqlite
 
-
-AVAILABLE_POINTS = [
-    "1", "2", "3", "5", "8",
-    "13", "20", "40", "❔", "☕",
+KEYBOARD_POINTS_LAYOUT = [
+    ["0.5", "1", "2", "3", "4"],
+    ["5", "6", "7", "8", "9"],
+    ["10", "12", "18", "24", "30"],
+    ["❓", "☕"],
 ]
-HALF_POINTS = len(AVAILABLE_POINTS) // 2
-ALL_MARKS = "♥♦♠♣"
 
+AVAILABLE_POINTS = []
+ROW_POINT_RANGES = []
+
+for row in KEYBOARD_POINTS_LAYOUT:
+    AVAILABLE_POINTS += row
+    ROW_POINT_RANGES.append(len(row))
+
+ALL_MARKS = "♥♦♠♣"
 
 class Vote:
     def __init__(self):
@@ -38,9 +45,7 @@ class Vote:
         res.version = dct["version"]
         return res
 
-
 class Game:
-
     OP_RESTART = "restart"
     OP_RESTART_NEW = "restart-new"
     OP_REVEAL = "reveal"
@@ -85,36 +90,48 @@ class Game:
             }
             for point in AVAILABLE_POINTS
         ]
+
+        layout_rows = []
+        point_key_index_start = 0
+        for layout_row in KEYBOARD_POINTS_LAYOUT:
+            point_key_index_end = point_key_index_start + len(layout_row)
+            point_keys_row = points_keys[slice(point_key_index_start, point_key_index_end)]
+            layout_rows.append(point_keys_row)
+            point_key_index_start = point_key_index_end
+
+        layout_rows.append(
+            [
+                {
+                    "type": "InlineKeyboardButton",
+                    "text": "Restart",
+                    "callback_data": "{}-click-{}".format(self.OP_RESTART, self.vote_id),
+                },
+                {
+                    "type": "InlineKeyboardButton",
+                    "text": "Restart 🆕",
+                    "callback_data": "{}-click-{}".format(self.OP_RESTART_NEW, self.vote_id),
+                },
+            ],
+        )
+
+        layout_rows.append(
+            [
+                {
+                    "type": "InlineKeyboardButton",
+                    "text": "Open Cards",
+                    "callback_data": "{}-click-{}".format(self.OP_REVEAL, self.vote_id),
+                },
+                {
+                    "type": "InlineKeyboardButton",
+                    "text": "Open Cards 🆕",
+                    "callback_data": "{}-click-{}".format(self.OP_REVEAL_NEW, self.vote_id),
+                },
+            ],
+        )
+
         return {
             "type": "InlineKeyboardMarkup",
-            "inline_keyboard": [
-                points_keys[:HALF_POINTS],
-                points_keys[HALF_POINTS:],
-                [
-                    {
-                        "type": "InlineKeyboardButton",
-                        "text": "Restart",
-                        "callback_data": "{}-click-{}".format(self.OP_RESTART, self.vote_id),
-                    },
-                    {
-                        "type": "InlineKeyboardButton",
-                        "text": "Restart 🆕",
-                        "callback_data": "{}-click-{}".format(self.OP_RESTART_NEW, self.vote_id),
-                    },
-                ],
-                [
-                    {
-                        "type": "InlineKeyboardButton",
-                        "text": "Open Cards",
-                        "callback_data": "{}-click-{}".format(self.OP_REVEAL, self.vote_id),
-                    },
-                    {
-                        "type": "InlineKeyboardButton",
-                        "text": "Open Cards 🆕",
-                        "callback_data": "{}-click-{}".format(self.OP_REVEAL_NEW, self.vote_id),
-                    },
-                ],
-            ],
+            "inline_keyboard": layout_rows,
         }
 
     def restart(self):
