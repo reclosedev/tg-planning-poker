@@ -1,4 +1,4 @@
-aiohttp==3.5.4
+aiohttp==3.8.5
 aiosocksy==0.1.2
 aiosqlite==0.10.0
 aiotg==1.0.0
